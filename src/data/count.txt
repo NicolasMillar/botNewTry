@@ -1,0 +1,9 @@
+| Nombre     | Conteo Total |
+| ---------- | ------------ |
+| Abandonico |      0       |
+| Gatopan    |      0       |
+| Geba       |      0       |
+| Millar     |      0       |
+| Osta       |      0       |
+| Rigo       |      0       |
+| Trollcas   |      0       |
