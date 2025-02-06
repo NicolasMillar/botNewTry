@@ -8,9 +8,9 @@ function parseTableData(content) {
     const table = [];
 
     for (const line of lines) {
-        const match = line.match(/\|\s*(\w+)\s*\|\s*(\d+)\s*\|/);
+        const match = line.match(/\|\s*(.+?)\s*\|\s*(\d+)\s*\|/); // Captura nombres con espacios
         if (match) {
-            table.push({ name: match[1], count: parseInt(match[2], 10) });
+            table.push({ name: match[1].trim(), count: parseInt(match[2], 10) });
         }
     }
 
@@ -45,7 +45,8 @@ function incrementCount(name) {
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
-                reject('Error al leer la base de datos.');
+                console.error(err);
+                reject(new Error('Error al leer la base de datos.'));
                 return;
             }
 
@@ -61,20 +62,21 @@ function incrementCount(name) {
             });
 
             if (!updated) {
-                reject('Nombre no encontrado en la base de datos.');
+                reject(new Error(`Nombre "${name}" no encontrado en la base de datos.`));
                 return;
             }
 
-            let newContent = '| Nombre     | Conteo Total |\n| ---------- | ------------ |\n';
-            newContent += table.map(row => `| ${row.name.padEnd(10)} | ${String(row.count).padStart(10)} |`).join('\n');
+            let newContent = '| Nombre       | Conteo Total |\n| ------------ | ------------ |\n';
+            newContent += table.map(row => `| ${row.name.padEnd(12)} | ${String(row.count).padStart(10)} |`).join('\n');
             newContent += '\n';
 
             fs.writeFile(filePath, newContent, 'utf8', (err) => {
                 if (err) {
-                    reject('Error al escribir en la base de datos.');
+                    console.error(err);
+                    reject(new Error('Error al escribir en la base de datos.'));
                     return;
                 }
-                resolve(`Se ha incrementado el conteo de ${name}.`);
+                resolve(`Se ha incrementado el conteo de "${name}".`);
             });
         });
     });
