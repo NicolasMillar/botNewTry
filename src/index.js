@@ -1,7 +1,7 @@
 // index.js
 require('dotenv').config(); // Cargar variables de entorno desde .env
 const { Client, Intents } = require('discord.js');
-const wekitosController = require('./wekitosController');
+const wekitosController = require('./controllers/wekitosController');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
