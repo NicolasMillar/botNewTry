@@ -1,34 +1,27 @@
-const { Client, GatewayIntentBits } = require('discord.js');
-const { getTable, incrementCount } = require('./controllers/table.controller');
 require('dotenv').config();
+const { Client, Intents } = require('discord.js');
+const wekitosController = require('./wekitosController');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+
+const TOKEN = process.env.DISCORD_TOKEN;
+
+if (!TOKEN) {
+    console.error('No se ha proporcionado un token de Discord. Asegúrate de configurar el archivo .env.');
+    process.exit(1);
+}
 
 client.once('ready', () => {
-    console.log(`Bot conectado como ${client.user.tag}`);
+    console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on('messageCreate', async (message) => {
-    if (message.content === '!table') {
-        try {
-            const tableMessage = await getTable();
-            message.channel.send(tableMessage);
-        } catch (error) {
-            message.channel.send('Hubo un error al obtener la tabla.');
-        }
-    } else if (message.content.startsWith('!wekitoDelDia')) {
-        const args = message.content.split(' ');
-        if (args.length < 2) {
-            return message.channel.send('Debes proporcionar un nombre.');
-        }
-        const name = args[1];
-        try {
-            await incrementCount(name);
-            message.channel.send(`Se ha actualizado el contador de ${name}.`);
-        } catch (error) {
-            message.channel.send(error);
-        }
+    if (message.author.bot) return;
+
+    if (message.content.startsWith('!tabla')) {
+        const tabla = wekitosController.generarTabla();
+        message.channel.send(tabla);
     }
 });
 
-client.login(process.env.TOKEN);
+client.login(TOKEN);
